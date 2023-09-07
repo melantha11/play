@@ -7,10 +7,10 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/text_vciew_hellow_world"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world"
+        android:text="默认文本"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +20,8 @@
         android:id="@+id/button_click_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         android:text="@string/button_click_me"
-        app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintBottom_toBottomOf="@+id/textView" />
+        app:layout_constraintBottom_toBottomOf="@+id/text_vciew_hellow_world"
+        app:layout_constraintStart_toStartOf="@+id/text_vciew_hellow_world" />
 </androidx.constraintlayout.widget.ConstraintLayout>
