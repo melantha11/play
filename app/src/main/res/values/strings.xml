@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="hello_world">你好，世界！</string>
+    <string name="button_click_me">点击我！</string>
+</resources>
