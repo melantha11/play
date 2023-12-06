@@ -1,6 +1,8 @@
 package com.example.myapplication.data;
 
-public class BookListMainActivity {
+import java.io.Serializable;
+
+public class BookListMainActivity implements Serializable {
     public int getImageResourceId() {
         return imageResourceId;
     }
@@ -11,10 +13,14 @@ public class BookListMainActivity {
         return name;
     }
 
-    private final String name;
+    private String name;
 
     public BookListMainActivity(String name_, int imageResourceId_) {
         this.name = name_;
         this.imageResourceId = imageResourceId_;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
