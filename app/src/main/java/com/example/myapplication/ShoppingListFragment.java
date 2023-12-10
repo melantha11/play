@@ -8,20 +8,28 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myapplication.data.BookListMainActivity;
 import com.example.myapplication.data.DataBank;
+import com.example.myapplication.data.SumMainActivity;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 
@@ -51,9 +59,12 @@ public class ShoppingListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
         }
     }
+
+    private String []tabHeaderStrings = {"每日任务","每周任务","普通任务","剧本任务"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,14 +74,28 @@ public class ShoppingListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_shopping_list, container, false);
 
         RecyclerView mainrecyclerView = rootView.findViewById(R.id.recyclerview_main);
-        mainrecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        mainrecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+
+        // ViewPager2 and TabLayout setup
+        ViewPager2 viewPager = rootView.findViewById(R.id.view_pager1);
+        TabLayout tabLayout = rootView.findViewById(R.id.tab_layout1);
+
+        // Create and set the adapter for ViewPager2
+        ShoppingListPagerAdapter pagerAdapter = new ShoppingListPagerAdapter(this);
+        viewPager.setAdapter(pagerAdapter);
+
+        // Link TabLayout and ViewPager2
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab,position) -> tab.setText(tabHeaderStrings[position])
+        ).attach();
+
 
 
         bookitems = new DataBank().LoadBookItems(requireActivity());
         if (0 == bookitems.size()) {
-            bookitems.add(new BookListMainActivity("软件项目管理案例教程（第4版）", R.drawable.book_2));
-            bookitems.add(new BookListMainActivity("创新工程实践", R.drawable.book_no_name));
-            bookitems.add(new BookListMainActivity("信息安全数学基础（第2版）", R.drawable.book_1));
+            bookitems.add(new BookListMainActivity("跑步",10,"0/99"));
+            bookitems.add(new BookListMainActivity("阅读",20,"0/2"));
+            bookitems.add(new BookListMainActivity("练琴",30,"1/4"));
         }
         bookItemAdapter = new BookItemAdapter(bookitems);
         mainrecyclerView.setAdapter(bookItemAdapter);
@@ -83,7 +108,11 @@ public class ShoppingListFragment extends Fragment {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         String name = data.getStringExtra("name");
-                        bookitems.add(new BookListMainActivity(name, R.drawable.book_1));
+                        String scoreText = data.getStringExtra("score");
+                        String times = data.getStringExtra("times");
+
+                        int score = Integer.parseInt(scoreText);
+                        bookitems.add(new BookListMainActivity(name,score,times));
                         bookItemAdapter.notifyItemInserted(bookitems.size());
                         new DataBank().SaveBookItems(requireActivity(), bookitems);
                     } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
@@ -99,9 +128,13 @@ public class ShoppingListFragment extends Fragment {
                         Intent data = result.getData();
                         int position = data.getIntExtra("position", -1);
                         String name = data.getStringExtra("name");
+                        int score = data.getIntExtra("score",10);
+                        String times = data.getStringExtra("times");
 
                         BookListMainActivity bookitem = bookitems.get(position);
                         bookitem.setName(name);
+                        bookitem.setScore(score);
+                        bookitem.setTimes(times);
                         bookItemAdapter.notifyItemChanged(position);
 
                         new DataBank().SaveBookItems(requireActivity(), bookitems);
@@ -114,13 +147,43 @@ public class ShoppingListFragment extends Fragment {
         return rootView;
     }
 
+    private static class ShoppingListPagerAdapter extends FragmentStateAdapter {
+
+        public ShoppingListPagerAdapter(@NonNull Fragment fragment) {
+            super(fragment);
+        }
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            // Create and return your individual fragments
+            switch(position){
+                case 0:
+                    return new TencentMapsFragment();
+                case 1:
+                    return new TencentMapsFragment();
+                case 2:
+                    return new TencentMapsFragment();
+                case 3:
+                    return new TencentMapsFragment();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            // Return the total number of tabs
+            return 4; // Change this based on your requirements
+        }
+    }
+
     private ArrayList<BookListMainActivity> bookitems = new ArrayList<>();
     private BookItemAdapter bookItemAdapter;
 
     //private ArrayList<BookListMainActivity> bookitems;
     // private BookItemAdapter bookItemAdapter;
 
-            ActivityResultLauncher<Intent> addItemlauncher;
+    ActivityResultLauncher<Intent> addItemlauncher;
     ActivityResultLauncher<Intent> updateItemlauncher;
 
     public boolean onContextItemSelected(MenuItem item) {
@@ -174,14 +237,17 @@ public class ShoppingListFragment extends Fragment {
          * (custom ViewHolder).
          */
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-            private final TextView textViewName;
-            private final ImageView imageViewItem;
-
+            private final TextView textViewScore;
+            private final TextView textViewTimes;
+            private final CheckBox checkBox;
+            private final TextView textViewSum;
             public ViewHolder(View bookItemView) {
                 super(bookItemView);
+                checkBox = bookItemView.findViewById(R.id.checkBox);
                 // Define click listener for the ViewHolder's View
-                textViewName = bookItemView.findViewById(R.id.text_view_book_title);
-                imageViewItem = bookItemView.findViewById(R.id.image_view_book_cover);
+                textViewScore = bookItemView.findViewById(R.id.score);
+                textViewTimes = bookItemView.findViewById(R.id.times);
+                textViewSum = bookItemView.findViewById(R.id.sum);
                 bookItemView.setOnCreateContextMenuListener(this);
             }
 
@@ -194,12 +260,18 @@ public class ShoppingListFragment extends Fragment {
                 menu.add(0, 2, this.getAdapterPosition(), "修改" + this.getAdapterPosition());
             }
 
-            public TextView getTextViewName() {
-                return textViewName;
-            }
 
-            public ImageView getImageViewPrice() {
-                return imageViewItem;
+            public CheckBox getCheckBox() {
+                return checkBox;
+            }
+            public TextView getTextViewScore() {
+                return textViewScore;
+            }
+            public TextView getTextViewTimes() {
+                return textViewTimes;
+            }
+            public TextView getTextViewSum() {
+                return textViewSum;
             }
         }
 
@@ -225,10 +297,35 @@ public class ShoppingListFragment extends Fragment {
 
         // Replace the contents of a view (invoked by the layout manager)
         @Override
+
         public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-            viewHolder.getTextViewName().setText(bookitems.get(position).getName());
-            viewHolder.getImageViewPrice().setImageResource(bookitems.get(position).getImageResourceId());
+            viewHolder.getCheckBox().setText(bookitems.get(position).getName());
+            viewHolder.getTextViewScore().setText("+"+bookitems.get(position).getScore());
+            viewHolder.getTextViewTimes().setText(bookitems.get(position).getTimes());
+
+            viewHolder.getCheckBox().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    // 处理CheckBox的点击事件
+                    // 在这里执行你想要的操作，例如更新数据或执行其他逻辑
+                    // 示例代码：如果CheckBox被选中，弹出一个Toast提示
+                    if (isChecked) {
+                        Toast.makeText(compoundButton.getContext(), "finished", Toast.LENGTH_SHORT).show();
+                        int clickedScore = bookitems.get(viewHolder.getAdapterPosition()).getScore();
+//                        /*
+
+                        // 更新显示sum的TextView
+                        SumMainActivity.sum += clickedScore;
+
+                        // 更新显示sum的TextView
+                        MainActivity.sumTextView.setText("Sum: " + SumMainActivity.sum);
+//                        */
+
+                    }
+                }
+            });
         }
+
 
         // Return the size of your dataset (invoked by the layout manager)
         @Override
