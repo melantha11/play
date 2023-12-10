@@ -3,25 +3,21 @@ package com.example.myapplication;//包的名字
 //引入的库
 
 import android.os.Bundle;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.myapplication.data.BookListMainActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 
 //声明类
 public class MainActivity extends AppCompatActivity {
-    private String []tabHeaderStrings = {"Books","News","Baidu maps"};
+    private String []tabHeaderStrings = {"Books","News","Tencent maps"};
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);                 //调用父类的方法
         setContentView(R.layout.activity_main3);             //设置布局；R->res
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return new WebViewFragment();
                 case 2:
-                    return new BaiduMapsFragment();
+                    return new TencentMapsFragment();
                 default:
                     return null;
             }

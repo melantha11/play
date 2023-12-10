@@ -1,15 +1,14 @@
 package com.example.myapplication;
 
 import android.app.Application;
-
-import com.baidu.mapapi.CoordType;
-import com.baidu.mapapi.SDKInitializer;
+import com.tencent.tencentmap.mapsdk.maps.TencentMap;
+import com.tencent.tencentmap.mapsdk.maps.TencentMapOptions;
 
 public class MyApplication extends Application {
-    public void OnCreate(){
+    @Override
+    public void onCreate() {
         super.onCreate();
-        SDKInitializer.setAgreePrivacy(this,true);
-        SDKInitializer.initialize(this);
-        SDKInitializer.setCoordType(CoordType.BD09LL);
+
     }
 }
+
