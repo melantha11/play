@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.myapplication.data.SumMainActivity;
+
 public class AwardItemDetailsActivity extends AppCompatActivity {
 
     private int position = -1;
@@ -42,6 +44,12 @@ public class AwardItemDetailsActivity extends AppCompatActivity {
                 intent.putExtra("cost",editTextItemCost.getText().toString());
                 intent.putExtra("position",position);
                 setResult(Activity.RESULT_OK,intent);
+
+                int cost = Integer.parseInt(editTextItemCost.getText().toString());
+                SumMainActivity.sum -= cost;
+                // 更新显示sum的TextView
+                MainActivity.sumTextView.setText("" + SumMainActivity.sum);
+
                 AwardItemDetailsActivity.this.finish();
             }
         });

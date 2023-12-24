@@ -154,13 +154,6 @@ public class AwardFragment extends Fragment {
             viewHolder.getTextViewCost().setText("-"+awarditems.get(position).getCost());
         }
 
-        // Replace the contents of a view (invoked by the layout manager)
-
-
-        /*public void onBindViewHolder(ShoppingListFragment.BookItemAdapter.ViewHolder viewHolder, final int position) {
-
-
-        }*/
 
 
         // Return the size of your dataset (invoked by the layout manager)

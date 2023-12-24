@@ -307,20 +307,13 @@ public class ShoppingListFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     // 处理CheckBox的点击事件
-                    // 在这里执行你想要的操作，例如更新数据或执行其他逻辑
-                    // 示例代码：如果CheckBox被选中，弹出一个Toast提示
                     if (isChecked) {
                         Toast.makeText(compoundButton.getContext(), "finished", Toast.LENGTH_SHORT).show();
                         int clickedScore = bookitems.get(viewHolder.getAdapterPosition()).getScore();
-//                        /*
-
                         // 更新显示sum的TextView
                         SumMainActivity.sum += clickedScore;
-
                         // 更新显示sum的TextView
-                        MainActivity.sumTextView.setText("Sum: " + SumMainActivity.sum);
-//                        */
-
+                        MainActivity.sumTextView.setText("" + SumMainActivity.sum);
                     }
                 }
             });
